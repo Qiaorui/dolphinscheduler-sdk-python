@@ -36,6 +36,9 @@ class Kubernetes(Task):
         "namespace",
         "min_cpu_cores",
         "min_memory_space",
+        "image_pull_policy",
+        "command",
+        "args",
     }
 
     def __init__(
@@ -45,6 +48,9 @@ class Kubernetes(Task):
         namespace: str,
         min_cpu_cores: float,
         min_memory_space: float,
+        image_pull_policy,
+        command,
+        exec_args,
         *args,
         **kwargs
     ):
@@ -53,3 +59,6 @@ class Kubernetes(Task):
         self.namespace = namespace
         self.min_cpu_cores = min_cpu_cores
         self.min_memory_space = min_memory_space
+        self.image_pull_policy = image_pull_policy
+        self.command = command
+        self.args = exec_args

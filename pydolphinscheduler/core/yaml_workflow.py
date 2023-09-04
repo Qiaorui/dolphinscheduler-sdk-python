@@ -50,7 +50,7 @@ class ParseTool:
         """Use $FILE{"data_path"} to load file from "data_path"."""
         if string_param.startswith("$FILE"):
             path = re.findall(r"\$FILE\{\"(.*?)\"\}", string_param)[0]
-            base_folder = kwargs.get("base_folder", ".")
+            base_folder = kwargs.get("base_folder", "../../tests/core")
             path = ParseTool.get_possible_path(path, base_folder)
             with open(path, "r") as read_file:
                 string_param = "".join(read_file)

@@ -73,7 +73,7 @@ For more way to start DolphinScheduler and the more detail about DolphinSchedule
 
 ### Run a simple example
 
-We have many examples in [examples](src/pydolphinscheduler/examples) directory, we here pick up a typical one
+We have many examples in [examples](pydolphinscheduler/examples) directory, we here pick up a typical one
 to show how to run it.
 
 ```shell
