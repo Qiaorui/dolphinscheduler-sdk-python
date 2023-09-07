@@ -20,6 +20,7 @@ import itertools
 import warnings
 from typing import Dict, List, Optional, Tuple, Union
 from unittest.mock import patch
+from constants import FailurePolicy
 
 import pytest
 
@@ -146,7 +147,7 @@ def test_deprecated_dependent_when_process_definition_name(mock_task_info):
 def test_dependent_item_date_error():
     """Test error when pass None to dependent_date."""
     with pytest.raises(
-        PyDSParamException, match="Parameter dependent_date must provider.*?"
+            PyDSParamException, match="Parameter dependent_date must provider.*?"
     ):
         DependentItem(
             project_name=TEST_PROJECT,
@@ -228,123 +229,123 @@ def test_dependent_operator_set_define_error(mock_code, arg_list):
     [
         # Test dependent operator (And | Or) with single dependent item
         (
-            (And, Or),
-            (
-                {
-                    "project_name": TEST_PROJECT,
-                    "workflow_name": TEST_WORKFLOW,
-                    "dependent_task_name": TEST_TASK,
-                    "dependent_date": DependentDate.LAST_MONTH_END,
-                },
-            ),
-            [
-                {
-                    "relation": op,
-                    "dependItemList": [
+                (And, Or),
+                (
                         {
-                            "projectCode": TEST_PROJECT_CODE,
-                            "definitionCode": TEST_DEFINITION_CODE,
-                            "depTaskCode": TEST_TASK_CODE,
-                            "cycle": "month",
-                            "dateValue": DependentDate.LAST_MONTH_END,
+                            "project_name": TEST_PROJECT,
+                            "workflow_name": TEST_WORKFLOW,
+                            "dependent_task_name": TEST_TASK,
+                            "dependent_date": DependentDate.LAST_MONTH_END,
                         },
-                    ],
-                }
-                for op in TEST_OPERATOR_LIST
-            ],
+                ),
+                [
+                    {
+                        "relation": op,
+                        "dependItemList": [
+                            {
+                                "projectCode": TEST_PROJECT_CODE,
+                                "definitionCode": TEST_DEFINITION_CODE,
+                                "depTaskCode": TEST_TASK_CODE,
+                                "cycle": "month",
+                                "dateValue": DependentDate.LAST_MONTH_END,
+                            },
+                        ],
+                    }
+                    for op in TEST_OPERATOR_LIST
+                ],
         ),
         # Test dependent operator (And | Or) with two dependent item
         (
-            (And, Or),
-            (
-                {
-                    "project_name": TEST_PROJECT,
-                    "workflow_name": TEST_WORKFLOW,
-                    "dependent_task_name": TEST_TASK,
-                    "dependent_date": DependentDate.LAST_MONTH_END,
-                },
-                {
-                    "project_name": TEST_PROJECT,
-                    "workflow_name": TEST_WORKFLOW,
-                    "dependent_task_name": TEST_TASK,
-                    "dependent_date": DependentDate.LAST_WEEK,
-                },
-            ),
-            [
-                {
-                    "relation": op,
-                    "dependItemList": [
+                (And, Or),
+                (
                         {
-                            "projectCode": TEST_PROJECT_CODE,
-                            "definitionCode": TEST_DEFINITION_CODE,
-                            "depTaskCode": TEST_TASK_CODE,
-                            "cycle": "month",
-                            "dateValue": DependentDate.LAST_MONTH_END,
+                            "project_name": TEST_PROJECT,
+                            "workflow_name": TEST_WORKFLOW,
+                            "dependent_task_name": TEST_TASK,
+                            "dependent_date": DependentDate.LAST_MONTH_END,
                         },
                         {
-                            "projectCode": TEST_PROJECT_CODE,
-                            "definitionCode": TEST_DEFINITION_CODE,
-                            "depTaskCode": TEST_TASK_CODE,
-                            "cycle": "week",
-                            "dateValue": DependentDate.LAST_WEEK,
+                            "project_name": TEST_PROJECT,
+                            "workflow_name": TEST_WORKFLOW,
+                            "dependent_task_name": TEST_TASK,
+                            "dependent_date": DependentDate.LAST_WEEK,
                         },
-                    ],
-                }
-                for op in TEST_OPERATOR_LIST
-            ],
+                ),
+                [
+                    {
+                        "relation": op,
+                        "dependItemList": [
+                            {
+                                "projectCode": TEST_PROJECT_CODE,
+                                "definitionCode": TEST_DEFINITION_CODE,
+                                "depTaskCode": TEST_TASK_CODE,
+                                "cycle": "month",
+                                "dateValue": DependentDate.LAST_MONTH_END,
+                            },
+                            {
+                                "projectCode": TEST_PROJECT_CODE,
+                                "definitionCode": TEST_DEFINITION_CODE,
+                                "depTaskCode": TEST_TASK_CODE,
+                                "cycle": "week",
+                                "dateValue": DependentDate.LAST_WEEK,
+                            },
+                        ],
+                    }
+                    for op in TEST_OPERATOR_LIST
+                ],
         ),
         # Test dependent operator (And | Or) with multiply dependent item
         (
-            (And, Or),
-            (
-                {
-                    "project_name": TEST_PROJECT,
-                    "workflow_name": TEST_WORKFLOW,
-                    "dependent_task_name": TEST_TASK,
-                    "dependent_date": DependentDate.LAST_MONTH_END,
-                },
-                {
-                    "project_name": TEST_PROJECT,
-                    "workflow_name": TEST_WORKFLOW,
-                    "dependent_task_name": TEST_TASK,
-                    "dependent_date": DependentDate.LAST_WEEK,
-                },
-                {
-                    "project_name": TEST_PROJECT,
-                    "workflow_name": TEST_WORKFLOW,
-                    "dependent_task_name": TEST_TASK,
-                    "dependent_date": DependentDate.LAST_ONE_DAYS,
-                },
-            ),
-            [
-                {
-                    "relation": op,
-                    "dependItemList": [
+                (And, Or),
+                (
                         {
-                            "projectCode": TEST_PROJECT_CODE,
-                            "definitionCode": TEST_DEFINITION_CODE,
-                            "depTaskCode": TEST_TASK_CODE,
-                            "cycle": "month",
-                            "dateValue": DependentDate.LAST_MONTH_END,
+                            "project_name": TEST_PROJECT,
+                            "workflow_name": TEST_WORKFLOW,
+                            "dependent_task_name": TEST_TASK,
+                            "dependent_date": DependentDate.LAST_MONTH_END,
                         },
                         {
-                            "projectCode": TEST_PROJECT_CODE,
-                            "definitionCode": TEST_DEFINITION_CODE,
-                            "depTaskCode": TEST_TASK_CODE,
-                            "cycle": "week",
-                            "dateValue": DependentDate.LAST_WEEK,
+                            "project_name": TEST_PROJECT,
+                            "workflow_name": TEST_WORKFLOW,
+                            "dependent_task_name": TEST_TASK,
+                            "dependent_date": DependentDate.LAST_WEEK,
                         },
                         {
-                            "projectCode": TEST_PROJECT_CODE,
-                            "definitionCode": TEST_DEFINITION_CODE,
-                            "depTaskCode": TEST_TASK_CODE,
-                            "cycle": "day",
-                            "dateValue": DependentDate.LAST_ONE_DAYS,
+                            "project_name": TEST_PROJECT,
+                            "workflow_name": TEST_WORKFLOW,
+                            "dependent_task_name": TEST_TASK,
+                            "dependent_date": DependentDate.LAST_ONE_DAYS,
                         },
-                    ],
-                }
-                for op in TEST_OPERATOR_LIST
-            ],
+                ),
+                [
+                    {
+                        "relation": op,
+                        "dependItemList": [
+                            {
+                                "projectCode": TEST_PROJECT_CODE,
+                                "definitionCode": TEST_DEFINITION_CODE,
+                                "depTaskCode": TEST_TASK_CODE,
+                                "cycle": "month",
+                                "dateValue": DependentDate.LAST_MONTH_END,
+                            },
+                            {
+                                "projectCode": TEST_PROJECT_CODE,
+                                "definitionCode": TEST_DEFINITION_CODE,
+                                "depTaskCode": TEST_TASK_CODE,
+                                "cycle": "week",
+                                "dateValue": DependentDate.LAST_WEEK,
+                            },
+                            {
+                                "projectCode": TEST_PROJECT_CODE,
+                                "definitionCode": TEST_DEFINITION_CODE,
+                                "depTaskCode": TEST_TASK_CODE,
+                                "cycle": "day",
+                                "dateValue": DependentDate.LAST_ONE_DAYS,
+                            },
+                        ],
+                    }
+                    for op in TEST_OPERATOR_LIST
+                ],
         ),
     ],
 )
@@ -357,10 +358,10 @@ def test_dependent_operator_set_define_error(mock_code, arg_list):
     },
 )
 def test_operator_dependent_item(
-    mock_code_info,
-    operators: Tuple[DependentOperator],
-    kwargs: Tuple[dict],
-    expect: List[Dict],
+        mock_code_info,
+        operators: Tuple[DependentOperator],
+        kwargs: Tuple[dict],
+        expect: List[Dict],
 ):
     """Test DependentOperator(DependentItem) function get_define.
 
@@ -397,153 +398,153 @@ def test_operator_dependent_item(
     [
         # Test dependent operator (And | Or) with single dependent task list
         (
-            (And, Or),
-            (
                 (And, Or),
                 (
-                    {
-                        "project_name": TEST_PROJECT,
-                        "workflow_name": TEST_WORKFLOW,
-                        "dependent_task_name": TEST_TASK,
-                        "dependent_date": DependentDate.LAST_MONTH_END,
-                    },
-                ),
-            ),
-            [
-                {
-                    "relation": par_op,
-                    "dependTaskList": [
-                        {
-                            "relation": chr_op,
-                            "dependItemList": [
+                        (And, Or),
+                        (
                                 {
-                                    "projectCode": TEST_PROJECT_CODE,
-                                    "definitionCode": TEST_DEFINITION_CODE,
-                                    "depTaskCode": TEST_TASK_CODE,
-                                    "cycle": "month",
-                                    "dateValue": DependentDate.LAST_MONTH_END,
+                                    "project_name": TEST_PROJECT,
+                                    "workflow_name": TEST_WORKFLOW,
+                                    "dependent_task_name": TEST_TASK,
+                                    "dependent_date": DependentDate.LAST_MONTH_END,
                                 },
-                            ],
-                        }
-                    ],
-                }
-                for (par_op, chr_op) in itertools.product(
+                        ),
+                ),
+                [
+                    {
+                        "relation": par_op,
+                        "dependTaskList": [
+                            {
+                                "relation": chr_op,
+                                "dependItemList": [
+                                    {
+                                        "projectCode": TEST_PROJECT_CODE,
+                                        "definitionCode": TEST_DEFINITION_CODE,
+                                        "depTaskCode": TEST_TASK_CODE,
+                                        "cycle": "month",
+                                        "dateValue": DependentDate.LAST_MONTH_END,
+                                    },
+                                ],
+                            }
+                        ],
+                    }
+                    for (par_op, chr_op) in itertools.product(
                     TEST_OPERATOR_LIST, TEST_OPERATOR_LIST
                 )
-            ],
+                ],
         ),
         # Test dependent operator (And | Or) with two dependent task list
         (
-            (And, Or),
-            (
                 (And, Or),
                 (
-                    {
-                        "project_name": TEST_PROJECT,
-                        "workflow_name": TEST_WORKFLOW,
-                        "dependent_task_name": TEST_TASK,
-                        "dependent_date": DependentDate.LAST_MONTH_END,
-                    },
-                    {
-                        "project_name": TEST_PROJECT,
-                        "workflow_name": TEST_WORKFLOW,
-                        "dependent_task_name": TEST_TASK,
-                        "dependent_date": DependentDate.LAST_WEEK,
-                    },
+                        (And, Or),
+                        (
+                                {
+                                    "project_name": TEST_PROJECT,
+                                    "workflow_name": TEST_WORKFLOW,
+                                    "dependent_task_name": TEST_TASK,
+                                    "dependent_date": DependentDate.LAST_MONTH_END,
+                                },
+                                {
+                                    "project_name": TEST_PROJECT,
+                                    "workflow_name": TEST_WORKFLOW,
+                                    "dependent_task_name": TEST_TASK,
+                                    "dependent_date": DependentDate.LAST_WEEK,
+                                },
+                        ),
                 ),
-            ),
-            [
-                {
-                    "relation": par_op,
-                    "dependTaskList": [
-                        {
-                            "relation": chr_op,
-                            "dependItemList": [
-                                {
-                                    "projectCode": TEST_PROJECT_CODE,
-                                    "definitionCode": TEST_DEFINITION_CODE,
-                                    "depTaskCode": TEST_TASK_CODE,
-                                    "cycle": "month",
-                                    "dateValue": DependentDate.LAST_MONTH_END,
-                                },
-                                {
-                                    "projectCode": TEST_PROJECT_CODE,
-                                    "definitionCode": TEST_DEFINITION_CODE,
-                                    "depTaskCode": TEST_TASK_CODE,
-                                    "cycle": "week",
-                                    "dateValue": DependentDate.LAST_WEEK,
-                                },
-                            ],
-                        }
-                    ],
-                }
-                for (par_op, chr_op) in itertools.product(
+                [
+                    {
+                        "relation": par_op,
+                        "dependTaskList": [
+                            {
+                                "relation": chr_op,
+                                "dependItemList": [
+                                    {
+                                        "projectCode": TEST_PROJECT_CODE,
+                                        "definitionCode": TEST_DEFINITION_CODE,
+                                        "depTaskCode": TEST_TASK_CODE,
+                                        "cycle": "month",
+                                        "dateValue": DependentDate.LAST_MONTH_END,
+                                    },
+                                    {
+                                        "projectCode": TEST_PROJECT_CODE,
+                                        "definitionCode": TEST_DEFINITION_CODE,
+                                        "depTaskCode": TEST_TASK_CODE,
+                                        "cycle": "week",
+                                        "dateValue": DependentDate.LAST_WEEK,
+                                    },
+                                ],
+                            }
+                        ],
+                    }
+                    for (par_op, chr_op) in itertools.product(
                     TEST_OPERATOR_LIST, TEST_OPERATOR_LIST
                 )
-            ],
+                ],
         ),
         # Test dependent operator (And | Or) with multiply dependent task list
         (
-            (And, Or),
-            (
                 (And, Or),
                 (
-                    {
-                        "project_name": TEST_PROJECT,
-                        "workflow_name": TEST_WORKFLOW,
-                        "dependent_task_name": TEST_TASK,
-                        "dependent_date": DependentDate.LAST_MONTH_END,
-                    },
-                    {
-                        "project_name": TEST_PROJECT,
-                        "workflow_name": TEST_WORKFLOW,
-                        "dependent_task_name": TEST_TASK,
-                        "dependent_date": DependentDate.LAST_WEEK,
-                    },
-                    {
-                        "project_name": TEST_PROJECT,
-                        "workflow_name": TEST_WORKFLOW,
-                        "dependent_task_name": TEST_TASK,
-                        "dependent_date": DependentDate.LAST_ONE_DAYS,
-                    },
+                        (And, Or),
+                        (
+                                {
+                                    "project_name": TEST_PROJECT,
+                                    "workflow_name": TEST_WORKFLOW,
+                                    "dependent_task_name": TEST_TASK,
+                                    "dependent_date": DependentDate.LAST_MONTH_END,
+                                },
+                                {
+                                    "project_name": TEST_PROJECT,
+                                    "workflow_name": TEST_WORKFLOW,
+                                    "dependent_task_name": TEST_TASK,
+                                    "dependent_date": DependentDate.LAST_WEEK,
+                                },
+                                {
+                                    "project_name": TEST_PROJECT,
+                                    "workflow_name": TEST_WORKFLOW,
+                                    "dependent_task_name": TEST_TASK,
+                                    "dependent_date": DependentDate.LAST_ONE_DAYS,
+                                },
+                        ),
                 ),
-            ),
-            [
-                {
-                    "relation": par_op,
-                    "dependTaskList": [
-                        {
-                            "relation": chr_op,
-                            "dependItemList": [
-                                {
-                                    "projectCode": TEST_PROJECT_CODE,
-                                    "definitionCode": TEST_DEFINITION_CODE,
-                                    "depTaskCode": TEST_TASK_CODE,
-                                    "cycle": "month",
-                                    "dateValue": DependentDate.LAST_MONTH_END,
-                                },
-                                {
-                                    "projectCode": TEST_PROJECT_CODE,
-                                    "definitionCode": TEST_DEFINITION_CODE,
-                                    "depTaskCode": TEST_TASK_CODE,
-                                    "cycle": "week",
-                                    "dateValue": DependentDate.LAST_WEEK,
-                                },
-                                {
-                                    "projectCode": TEST_PROJECT_CODE,
-                                    "definitionCode": TEST_DEFINITION_CODE,
-                                    "depTaskCode": TEST_TASK_CODE,
-                                    "cycle": "day",
-                                    "dateValue": DependentDate.LAST_ONE_DAYS,
-                                },
-                            ],
-                        }
-                    ],
-                }
-                for (par_op, chr_op) in itertools.product(
+                [
+                    {
+                        "relation": par_op,
+                        "dependTaskList": [
+                            {
+                                "relation": chr_op,
+                                "dependItemList": [
+                                    {
+                                        "projectCode": TEST_PROJECT_CODE,
+                                        "definitionCode": TEST_DEFINITION_CODE,
+                                        "depTaskCode": TEST_TASK_CODE,
+                                        "cycle": "month",
+                                        "dateValue": DependentDate.LAST_MONTH_END,
+                                    },
+                                    {
+                                        "projectCode": TEST_PROJECT_CODE,
+                                        "definitionCode": TEST_DEFINITION_CODE,
+                                        "depTaskCode": TEST_TASK_CODE,
+                                        "cycle": "week",
+                                        "dateValue": DependentDate.LAST_WEEK,
+                                    },
+                                    {
+                                        "projectCode": TEST_PROJECT_CODE,
+                                        "definitionCode": TEST_DEFINITION_CODE,
+                                        "depTaskCode": TEST_TASK_CODE,
+                                        "cycle": "day",
+                                        "dateValue": DependentDate.LAST_ONE_DAYS,
+                                    },
+                                ],
+                            }
+                        ],
+                    }
+                    for (par_op, chr_op) in itertools.product(
                     TEST_OPERATOR_LIST, TEST_OPERATOR_LIST
                 )
-            ],
+                ],
         ),
     ],
 )
@@ -556,10 +557,10 @@ def test_operator_dependent_item(
     },
 )
 def test_operator_dependent_task_list_multi_dependent_item(
-    mock_code_info,
-    operators: Tuple[DependentOperator],
-    args: Tuple[Union[Tuple, dict]],
-    expect: List[Dict],
+        mock_code_info,
+        operators: Tuple[DependentOperator],
+        args: Tuple[Union[Tuple, dict]],
+        expect: List[Dict],
 ):
     """Test DependentOperator(DependentOperator(DependentItem)) single operator function get_define.
 
@@ -631,49 +632,49 @@ def get_dep_task_list(*operator):
     [
         # Test dependent operator (And | Or) with two dependent task list
         (
-            (And, Or),
-            (
-                ((And, And), (And, Or), (Or, And), (Or, Or)),
-                {
-                    "project_name": TEST_PROJECT,
-                    "workflow_name": TEST_WORKFLOW,
-                    "dependent_task_name": TEST_TASK,
-                    "dependent_date": DependentDate.LAST_MONTH_END,
-                },
-            ),
-            [
-                {
-                    "relation": parent_op.operator_name(),
-                    "dependTaskList": get_dep_task_list(*child_ops),
-                }
-                for parent_op in (And, Or)
-                for child_ops in ((And, And), (And, Or), (Or, And), (Or, Or))
-            ],
+                (And, Or),
+                (
+                        ((And, And), (And, Or), (Or, And), (Or, Or)),
+                        {
+                            "project_name": TEST_PROJECT,
+                            "workflow_name": TEST_WORKFLOW,
+                            "dependent_task_name": TEST_TASK,
+                            "dependent_date": DependentDate.LAST_MONTH_END,
+                        },
+                ),
+                [
+                    {
+                        "relation": parent_op.operator_name(),
+                        "dependTaskList": get_dep_task_list(*child_ops),
+                    }
+                    for parent_op in (And, Or)
+                    for child_ops in ((And, And), (And, Or), (Or, And), (Or, Or))
+                ],
         ),
         # Test dependent operator (And | Or) with multiple dependent task list
         (
-            (And, Or),
-            (
-                ((And, And, And), (And, And, And, And), (And, And, And, And, And)),
-                {
-                    "project_name": TEST_PROJECT,
-                    "workflow_name": TEST_WORKFLOW,
-                    "dependent_task_name": TEST_TASK,
-                    "dependent_date": DependentDate.LAST_MONTH_END,
-                },
-            ),
-            [
-                {
-                    "relation": parent_op.operator_name(),
-                    "dependTaskList": get_dep_task_list(*child_ops),
-                }
-                for parent_op in (And, Or)
-                for child_ops in (
-                    (And, And, And),
-                    (And, And, And, And),
-                    (And, And, And, And, And),
+                (And, Or),
+                (
+                        ((And, And, And), (And, And, And, And), (And, And, And, And, And)),
+                        {
+                            "project_name": TEST_PROJECT,
+                            "workflow_name": TEST_WORKFLOW,
+                            "dependent_task_name": TEST_TASK,
+                            "dependent_date": DependentDate.LAST_MONTH_END,
+                        },
+                ),
+                [
+                    {
+                        "relation": parent_op.operator_name(),
+                        "dependTaskList": get_dep_task_list(*child_ops),
+                    }
+                    for parent_op in (And, Or)
+                    for child_ops in (
+                        (And, And, And),
+                        (And, And, And, And),
+                        (And, And, And, And, And),
                 )
-            ],
+                ],
         ),
     ],
 )
@@ -686,10 +687,10 @@ def get_dep_task_list(*operator):
     },
 )
 def test_operator_dependent_task_list_multi_dependent_list(
-    mock_code_info,
-    operators: Tuple[DependentOperator],
-    args: Tuple[Union[Tuple, dict]],
-    expect: List[Dict],
+        mock_code_info,
+        operators: Tuple[DependentOperator],
+        args: Tuple[Union[Tuple, dict]],
+        expect: List[Dict],
 ):
     """Test DependentOperator(DependentOperator(DependentItem)) multiply operator function get_define.
 
@@ -728,7 +729,7 @@ def test_operator_dependent_task_list_multi_dependent_list(
             ]
             op = operator(*dependent_task_list)
             assert (
-                expect[expect_idx] == op.get_define()
+                    expect[expect_idx] == op.get_define()
             ), f"Failed with operator syntax {operator}.{dpt_ops}"
             expect_idx += 1
 
@@ -750,6 +751,10 @@ def test_dependent_get_define(mock_code_version, mock_dep_code):
     project_name = "test-dep-project"
     workflow_name = "test-dep-definition"
     dependent_task_name = "test-dep-task"
+    failure_policy = FailurePolicy.WAITING
+    check_interval = 14
+    failure_waiting_time = 99
+
     dep_operator = And(
         Or(
             # test dependence with add tasks
@@ -774,6 +779,9 @@ def test_dependent_get_define(mock_code_version, mock_dep_code):
         "localParams": [],
         "dependence": {
             "relation": "AND",
+            "checkInterval": check_interval,
+            "failurePolicy": failure_policy,
+            'failureWaitingTime': failure_waiting_time,
             "dependTaskList": [
                 {
                     "relation": "OR",
@@ -805,5 +813,7 @@ def test_dependent_get_define(mock_code_version, mock_dep_code):
         "waitStartTimeout": {},
     }
 
-    task = Dependent(name, dependence=dep_operator)
+    task = Dependent(name, dependence=dep_operator, check_interval=check_interval,
+                     failure_waiting_time=failure_waiting_time, failure_policy=failure_policy)
+
     assert task.task_params == expect_task_params

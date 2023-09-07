@@ -163,3 +163,10 @@ class SelectorOperator(str):
     DOES_NOT_EXIST = 'DoesNotExist'
     GT = 'Gt'
     Lt = 'Lt'
+
+
+class FailurePolicy(str):
+    """Constants for Failure Policies """
+
+    WAITING = "DEPENDENT_FAILURE_WAITING"
+    FAILURE = "DEPENDENT_FAILURE_FAILURE"

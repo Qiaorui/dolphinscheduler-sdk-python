@@ -25,6 +25,7 @@ from pydolphinscheduler.core.task import Task
 from pydolphinscheduler.exceptions import PyDSJavaGatewayException, PyDSParamException
 from pydolphinscheduler.java_gateway import gateway
 from pydolphinscheduler.models.base import Base
+from constants import FailurePolicy
 
 DEPENDENT_ALL_TASK_IN_WORKFLOW = "0"
 
@@ -88,14 +89,14 @@ class DependentItem(Base):
     # TODO maybe we should conside overwrite operator `and` and `or` for DependentItem to
     #  support more easy way to set relation
     def __init__(
-        self,
-        project_name: str,
-        # TODO zhongjiajie should be also depeloped in 4.1.0
-        workflow_name: Optional[str] = None,
-        dependent_task_name: Optional[str] = DEPENDENT_ALL_TASK_IN_WORKFLOW,
-        dependent_date: Optional[DependentDate] = DependentDate.TODAY,
-        *args,
-        **kwargs,
+            self,
+            project_name: str,
+            # TODO zhongjiajie should be also depeloped in 4.1.0
+            workflow_name: Optional[str] = None,
+            dependent_task_name: Optional[str] = DEPENDENT_ALL_TASK_IN_WORKFLOW,
+            dependent_date: Optional[DependentDate] = DependentDate.TODAY,
+            *args,
+            **kwargs,
     ):
         obj_name = (
             f"{project_name}.{workflow_name}.{dependent_task_name}.{dependent_date}"
@@ -275,9 +276,14 @@ class Or(DependentOperator):
 class Dependent(Task):
     """Task dependent object, declare behavior for dependent task to dolphinscheduler."""
 
-    def __init__(self, name: str, dependence: DependentOperator, *args, **kwargs):
+    def __init__(self, name: str, dependence: DependentOperator, check_interval: int = 10,
+                 failure_policy: FailurePolicy = FailurePolicy.FAILURE, failure_waiting_time: int = 200, *args,
+                 **kwargs):
         super().__init__(name, TaskType.DEPENDENT, *args, **kwargs)
         self.dependence = dependence
+        self.check_interval = check_interval
+        self.failure_policy = failure_policy
+        self.failure_waiting_time = failure_waiting_time
 
     @property
     def task_params(self, camel_attr: bool = True, custom_attr: set = None) -> Dict:
@@ -289,4 +295,14 @@ class Dependent(Task):
         """
         params = super().task_params
         params["dependence"] = self.dependence.get_define()
+
+        # Currently these attributes are nested under dependence block, which is not necessary,
+        # a temporary fix would be manually add them with code below.
+        # The dolphinscheduler author should consider to improve the json structure, thus we can use
+        # more generic way to build it.
+        params['dependence']['checkInterval'] = self.check_interval
+        params['dependence']['failurePolicy'] = self.failure_policy
+        if self.failure_policy == FailurePolicy.WAITING:
+            params['dependence']['failureWaitingTime'] = self.failure_waiting_time
+
         return params
