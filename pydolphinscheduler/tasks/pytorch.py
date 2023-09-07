@@ -26,7 +26,7 @@ class DEFAULT:
     """Default values for Pytorch."""
 
     is_create_environment = False
-    project_path = "../../tests/tasks"
+    project_path = "."
     python_command = "${PYTHON_HOME}"
 
 
