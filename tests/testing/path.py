@@ -22,13 +22,11 @@ from typing import Any, Generator
 
 project_root = Path(__file__).parent.parent.parent
 
-path_code_tasks = project_root.joinpath("src", "pydolphinscheduler", "tasks")
-path_example = project_root.joinpath("src", "pydolphinscheduler", "examples")
+path_code_tasks = project_root.joinpath("pydolphinscheduler", "tasks")
+path_example = project_root.joinpath("pydolphinscheduler", "examples")
 path_yaml_example = project_root.joinpath("examples", "yaml_define")
 path_doc_tasks = project_root.joinpath("docs", "source", "tasks")
-path_default_config_yaml = project_root.joinpath(
-    "src", "pydolphinscheduler", "default_config.yaml"
-)
+path_default_config_yaml = project_root.joinpath("pydolphinscheduler", "default_config.yaml")
 
 
 def get_all_examples() -> Generator[Path, Any, None]:

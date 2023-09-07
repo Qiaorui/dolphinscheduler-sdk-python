@@ -20,6 +20,7 @@
 from unittest.mock import patch
 
 from pydolphinscheduler.tasks.kubernetes import Kubernetes
+from constants import ImagePullPolicy, SelectorOperator
 
 
 def test_kubernetes_get_define():
@@ -28,24 +29,76 @@ def test_kubernetes_get_define():
     version = 1
     name = "test_kubernetes_get_define"
     image = "ds-dev"
-    namespace = str({"name": "default", "cluster": "lab"})
-    minCpuCores = 2.0
-    minMemorySpace = 10.0
+    namespace = {"name": "default", "cluster": "lab"}
+    min_cpu_cores = 2.0
+    min_memory_space = 10.0
+    ipp = ImagePullPolicy.ALWAYS
+    command = ['bin']
+    args = ['-m', 'foo']
 
     expect_task_params = {
         "resourceList": [],
         "localParams": [],
         "image": image,
-        "namespace": namespace,
-        "minCpuCores": minCpuCores,
-        "minMemorySpace": minMemorySpace,
+        "namespace": str(namespace),
+        "minCpuCores": min_cpu_cores,
+        "minMemorySpace": min_memory_space,
         "dependence": {},
         "conditionResult": {"successNode": [""], "failedNode": [""]},
         "waitStartTimeout": {},
+        'imagePullPolicy': ipp,
+        'command': str(command),
+        'args': str(args),
+        'customizedLabels': [],
+        'nodeSelectors': []
     }
     with patch(
-        "pydolphinscheduler.core.task.Task.gen_code_and_version",
-        return_value=(code, version),
+            "pydolphinscheduler.core.task.Task.gen_code_and_version",
+            return_value=(code, version),
     ):
-        k8s = Kubernetes(name, image, namespace, minCpuCores, minMemorySpace)
+        k8s = Kubernetes(name, image, namespace, min_cpu_cores, min_memory_space, ipp, command, args)
+        assert k8s.task_params == expect_task_params
+
+
+def test_kubernetes_get_define_with_optional_attr():
+    """Test task kubernetes function get_define."""
+    code = 123
+    version = 1
+    name = "test_kubernetes_get_define"
+    image = "ds-dev"
+    namespace = {"name": "default", "cluster": "lab"}
+    min_cpu_cores = 2.0
+    min_memory_space = 10.0
+    ipp = ImagePullPolicy.ALWAYS
+    command = ['bin']
+    args = ['-m', 'foo']
+    customized_labels = [{'label': 'user', 'value': 'admin'}, {'label': 'path', 'value': 'root'}]
+    node_selectors = [{'key': 'foo', 'operator': SelectorOperator.DOES_NOT_EXIST, 'value': 'bar'}]
+
+    expect_task_params = {
+        "resourceList": [],
+        "localParams": [],
+        "image": image,
+        "namespace": str(namespace),
+        "minCpuCores": min_cpu_cores,
+        "minMemorySpace": min_memory_space,
+        "dependence": {},
+        "conditionResult": {"successNode": [""], "failedNode": [""]},
+        "waitStartTimeout": {},
+        'imagePullPolicy': ipp,
+        'command': str(command),
+        'args': str(args),
+        'customizedLabels': customized_labels,
+        'nodeSelectors': node_selectors,
+    }
+    with patch(
+            "pydolphinscheduler.core.task.Task.gen_code_and_version",
+            return_value=(code, version),
+    ):
+        k8s = Kubernetes(name, image, namespace, min_cpu_cores, min_memory_space, ipp, command, args)
+        for i in customized_labels:
+            k8s.add_customized_label(i['label'], i['value'])
+        for i in node_selectors:
+            k8s.add_node_selector(i['key'], i['operator'], i['value'])
+
         assert k8s.task_params == expect_task_params

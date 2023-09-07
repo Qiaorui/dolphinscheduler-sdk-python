@@ -20,6 +20,7 @@
 
 from pydolphinscheduler.core.workflow import Workflow
 from pydolphinscheduler.tasks.kubernetes import Kubernetes
+from constants import ImagePullPolicy
 
 with Workflow(
     name="task_kubernetes_example",
@@ -27,9 +28,12 @@ with Workflow(
     task_k8s = Kubernetes(
         name="task_k8s",
         image="ds-dev",
-        namespace=str({"name": "default", "cluster": "lab"}),
+        namespace={"name": "default", "cluster": "lab"},
         min_cpu_cores=2.0,
         min_memory_space=10.0,
+        image_pull_policy=ImagePullPolicy.ALWAYS,
+        command=['bin'],
+        exec_args=['-m', 'foo']
     )
     workflow.submit()
 # [end workflow_declare]

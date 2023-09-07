@@ -17,7 +17,7 @@
 
 """DolphinScheduler Base object."""
 
-from typing import Dict, Optional
+from typing import Dict, Optional, Callable
 
 # from pydolphinscheduler.models.user import User
 from pydolphinscheduler.utils.string import attr2camel
@@ -48,12 +48,18 @@ class Base:
         )
 
     def get_define_custom(
-        self, camel_attr: bool = True, custom_attr: set = None
+            self, camel_attr: bool = True, custom_attr: set = None, attr_func: Dict[str, Callable] = None
     ) -> Dict:
         """Get object definition attribute by given attr set."""
+        attr_func = {} if attr_func is None else attr_func
         content = {}
         for attr in custom_attr:
             val = getattr(self, attr, None)
+            # Using wrapper to transform attribute to certain data type or structure.
+            # This is a temporary solver for some node that has inconsistent attribute type,
+            # for example, a list but in string type, or a dict of string type.
+            val = attr_func[attr](val) if attr in attr_func else val
+
             if camel_attr:
                 content[attr2camel(attr)] = val
             else:
@@ -63,7 +69,7 @@ class Base:
     def get_define(self, camel_attr: bool = True) -> Dict:
         """Get object definition attribute communicate to Java gateway server.
 
-        use attribute `self._DEFINE_ATTR` to determine which attributes should including when
+        use attribute `self._DEFINE_ATTR` to determine which attributes should be including when
         object tries to communicate with Java gateway server.
         """
         content = self.get_define_custom(camel_attr, self._DEFINE_ATTR)

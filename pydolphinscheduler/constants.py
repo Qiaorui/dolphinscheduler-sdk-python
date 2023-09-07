@@ -144,3 +144,22 @@ class Keyword(str):
 
     DATASOURCE_ID = "id"
     DATASOURCE_TYPE = "type"
+
+
+class ImagePullPolicy(str):
+    """Constants for image pull policy."""
+
+    ALWAYS = "Always"
+    NEVER = "Never"
+    IF_NOT_PRESENT = "IfNotPresent"
+
+
+class SelectorOperator(str):
+    """Constants for Node Selector operators"""
+
+    IN = 'In'
+    NOT_IN = 'NotIn'
+    EXISTS = 'Exists'
+    DOES_NOT_EXIST = 'DoesNotExist'
+    GT = 'Gt'
+    Lt = 'Lt'

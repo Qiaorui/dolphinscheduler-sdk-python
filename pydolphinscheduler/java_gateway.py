@@ -316,5 +316,4 @@ class GatewayEntryPoint:
             timeout,
         )
 
-
 gateway = GatewayEntryPoint()

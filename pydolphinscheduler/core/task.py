@@ -21,7 +21,7 @@ import types
 import warnings
 from datetime import timedelta
 from logging import getLogger
-from typing import Dict, List, Optional, Sequence, Set, Tuple, Union
+from typing import Dict, List, Optional, Sequence, Set, Tuple, Union, Callable
 
 from pydolphinscheduler import configuration
 from pydolphinscheduler.constants import (
@@ -69,10 +69,10 @@ class TaskRelation(Base):
     }
 
     def __init__(
-        self,
-        pre_task_code: int,
-        post_task_code: int,
-        name: Optional[str] = None,
+            self,
+            pre_task_code: int,
+            post_task_code: int,
+            name: Optional[str] = None,
     ):
         super().__init__(name)
         self.pre_task_code = pre_task_code
@@ -145,30 +145,30 @@ class Task(Base):
     DEFAULT_CONDITION_RESULT = {"successNode": [""], "failedNode": [""]}
 
     def __init__(
-        self,
-        name: str,
-        task_type: str,
-        description: Optional[str] = None,
-        flag: Optional[str] = TaskFlag.YES,
-        task_priority: Optional[str] = TaskPriority.MEDIUM,
-        worker_group: Optional[str] = configuration.WORKFLOW_WORKER_GROUP,
-        environment_name: Optional[str] = None,
-        delay_time: Optional[int] = 0,
-        fail_retry_times: Optional[int] = 0,
-        fail_retry_interval: Optional[int] = 1,
-        timeout_notify_strategy: Optional = None,
-        timeout: Optional[timedelta] = None,
-        workflow: Optional[Workflow] = None,
-        resource_list: Optional[List] = None,
-        dependence: Optional[Dict] = None,
-        wait_start_timeout: Optional[Dict] = None,
-        condition_result: Optional[Dict] = None,
-        resource_plugin: Optional[ResourcePlugin] = None,
-        is_cache: Optional[bool] = False,
-        input_params: Optional[Dict] = None,
-        output_params: Optional[Dict] = None,
-        *args,
-        **kwargs,
+            self,
+            name: str,
+            task_type: str,
+            description: Optional[str] = None,
+            flag: Optional[str] = TaskFlag.YES,
+            task_priority: Optional[str] = TaskPriority.MEDIUM,
+            worker_group: Optional[str] = configuration.WORKFLOW_WORKER_GROUP,
+            environment_name: Optional[str] = None,
+            delay_time: Optional[int] = 0,
+            fail_retry_times: Optional[int] = 0,
+            fail_retry_interval: Optional[int] = 1,
+            timeout_notify_strategy: Optional = None,
+            timeout: Optional[timedelta] = None,
+            workflow: Optional[Workflow] = None,
+            resource_list: Optional[List] = None,
+            dependence: Optional[Dict] = None,
+            wait_start_timeout: Optional[Dict] = None,
+            condition_result: Optional[Dict] = None,
+            resource_plugin: Optional[ResourcePlugin] = None,
+            is_cache: Optional[bool] = False,
+            input_params: Optional[Dict] = None,
+            output_params: Optional[Dict] = None,
+            *args,
+            **kwargs,
     ):
         super().__init__(name, description)
         self.task_type = task_type
@@ -317,7 +317,9 @@ class Task(Base):
         Will get result to combine _task_custom_attr and custom_attr.
         """
         custom_attr = self._get_attr()
-        return self.get_define_custom(custom_attr=custom_attr)
+        wrappers = self._get_attr_wrappers()
+
+        return self.get_define_custom(custom_attr=custom_attr, attr_func=wrappers)
 
     def get_plugin(self):
         """Return the resource plug-in.
@@ -347,8 +349,8 @@ class Task(Base):
                 setattr(self, self.ext_attr.lstrip(Symbol.UNDERLINE), content)
             else:
                 if self.resource_plugin is not None or (
-                    self.workflow is not None
-                    and self.workflow.resource_plugin is not None
+                        self.workflow is not None
+                        and self.workflow.resource_plugin is not None
                 ):
                     index = _ext_attr.rfind(Symbol.POINT)
                     if index != -1:
@@ -384,7 +386,7 @@ class Task(Base):
         return self
 
     def _set_deps(
-        self, tasks: Union["Task", Sequence["Task"]], upstream: bool = True
+            self, tasks: Union["Task", Sequence["Task"]], upstream: bool = True
     ) -> None:
         """
         Set parameter tasks dependent to current task.
@@ -464,9 +466,9 @@ class Task(Base):
         return local_params
 
     def add_in(
-        self,
-        name: str,
-        value: Optional[Union[int, str, float, bool, BaseDataType]] = None,
+            self,
+            name: str,
+            value: Optional[Union[int, str, float, bool, BaseDataType]] = None,
     ):
         """Add input parameters.
 
@@ -484,9 +486,9 @@ class Task(Base):
         self._input_params[name] = value
 
     def add_out(
-        self,
-        name: str,
-        value: Optional[Union[int, str, float, bool, BaseDataType]] = None,
+            self,
+            name: str,
+            value: Optional[Union[int, str, float, bool, BaseDataType]] = None,
     ):
         """Add output parameters.
 
@@ -502,3 +504,15 @@ class Task(Base):
 
         """
         self._output_params[name] = value
+
+    def _get_attr_wrappers(self) -> Dict[str, Callable]:
+        """Get attributes wrappers
+
+        It should be implemented for subclass which has attributes with inconsistent data type.
+        For example, a list object but communicates with server as str, then we should use a function to transform it
+        to str. This should be just a temporary method for fixing some task type that has this kind of problem.
+        In the future the data type should be consistent, any kind of this need should be cast to server side.
+
+        """
+
+        return {}
