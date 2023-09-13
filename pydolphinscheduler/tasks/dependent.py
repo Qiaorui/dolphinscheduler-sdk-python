@@ -25,7 +25,7 @@ from pydolphinscheduler.core.task import Task
 from pydolphinscheduler.exceptions import PyDSJavaGatewayException, PyDSParamException
 from pydolphinscheduler.java_gateway import gateway
 from pydolphinscheduler.models.base import Base
-from constants import FailurePolicy
+from pydolphinscheduler.constants import FailurePolicy
 
 DEPENDENT_ALL_TASK_IN_WORKFLOW = "0"
 

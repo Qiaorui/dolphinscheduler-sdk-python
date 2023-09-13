@@ -18,7 +18,7 @@
 """Task Kubernetes."""
 from pydolphinscheduler.constants import TaskType
 from pydolphinscheduler.core.task import Task
-from constants import ImagePullPolicy, SelectorOperator
+from pydolphinscheduler.constants import ImagePullPolicy, SelectorOperator
 
 
 class Kubernetes(Task):
