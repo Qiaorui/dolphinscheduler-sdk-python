@@ -47,8 +47,8 @@ def test_kubernetes_get_define():
         "conditionResult": {"successNode": [""], "failedNode": [""]},
         "waitStartTimeout": {},
         'imagePullPolicy': ipp,
-        'command': str(command),
-        'args': str(args),
+        'command': """["bin"]""",
+        'args': """["-m", "foo"]""",
         'customizedLabels': [],
         'nodeSelectors': []
     }
@@ -86,8 +86,8 @@ def test_kubernetes_get_define_with_optional_attr():
         "conditionResult": {"successNode": [""], "failedNode": [""]},
         "waitStartTimeout": {},
         'imagePullPolicy': ipp,
-        'command': str(command),
-        'args': str(args),
+        'command': """["bin"]""",
+        'args': """["-m", "foo"]""",
         'customizedLabels': customized_labels,
         'nodeSelectors': node_selectors,
     }

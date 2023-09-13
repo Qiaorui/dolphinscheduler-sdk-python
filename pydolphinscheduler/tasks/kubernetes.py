@@ -89,4 +89,4 @@ class Kubernetes(Task):
         self.node_selectors.append({'key': key, 'operator': operator, 'value': value})
 
     def _get_attr_wrappers(self):
-        return {'namespace': json.dumps, 'args': str, 'command': str}
+        return {'namespace': json.dumps, 'args': json.dumps, 'command': json.dumps}
