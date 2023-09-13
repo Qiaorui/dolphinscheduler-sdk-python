@@ -19,6 +19,7 @@
 from pydolphinscheduler.constants import TaskType
 from pydolphinscheduler.core.task import Task
 from pydolphinscheduler.constants import ImagePullPolicy, SelectorOperator
+from pydolphinscheduler import configuration
 
 
 class Kubernetes(Task):
@@ -52,11 +53,11 @@ class Kubernetes(Task):
     def __init__(
             self,
             name: str,
-            image: str,
-            namespace: dict,
-            min_cpu_cores: float,
-            min_memory_space: float,
-            image_pull_policy: ImagePullPolicy,
+            image: str = configuration.KUBERNATES_IMAGE,
+            image_pull_policy=ImagePullPolicy.ALWAYS,
+            namespace: dict = configuration.KUBERNATES_NAMESPACE,
+            min_cpu_cores: float = None,
+            min_memory_space: float = None,
             command: list = None,
             exec_args: list = None,
             customized_labels: list = None,

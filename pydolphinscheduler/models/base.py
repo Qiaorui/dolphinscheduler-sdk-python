@@ -58,7 +58,7 @@ class Base:
             # Using wrapper to transform attribute to certain data type or structure.
             # This is a temporary solver for some node that has inconsistent attribute type,
             # for example, a list but in string type, or a dict of string type.
-            val = attr_func[attr](val) if attr in attr_func else val
+            val = attr_func[attr](val) if attr in attr_func and val is not None else val
 
             if camel_attr:
                 content[attr2camel(attr)] = val

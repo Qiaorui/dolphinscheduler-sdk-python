@@ -56,7 +56,7 @@ def test_kubernetes_get_define():
             "pydolphinscheduler.core.task.Task.gen_code_and_version",
             return_value=(code, version),
     ):
-        k8s = Kubernetes(name, image, namespace, min_cpu_cores, min_memory_space, ipp, command, args)
+        k8s = Kubernetes(name, image, ipp, namespace, min_cpu_cores, min_memory_space, command, args)
         assert k8s.task_params == expect_task_params
 
 
@@ -95,10 +95,43 @@ def test_kubernetes_get_define_with_optional_attr():
             "pydolphinscheduler.core.task.Task.gen_code_and_version",
             return_value=(code, version),
     ):
-        k8s = Kubernetes(name, image, namespace, min_cpu_cores, min_memory_space, ipp, command, args)
+        k8s = Kubernetes(name, image, ipp,namespace, min_cpu_cores, min_memory_space, command, args)
         for i in customized_labels:
             k8s.add_customized_label(i['label'], i['value'])
         for i in node_selectors:
             k8s.add_node_selector(i['key'], i['operator'], i['value'])
+
+        assert k8s.task_params == expect_task_params
+
+
+def test_kubernetes_get_define_without_optional_attrs():
+    """Test task kubernetes function get_define."""
+    code = 123
+    version = 1
+    name = "test_kubernetes_get_define"
+    image = "ds-dev"
+    ipp = ImagePullPolicy.ALWAYS
+
+    expect_task_params = {
+        "resourceList": [],
+        "localParams": [],
+        "image": image,
+        "dependence": {},
+        "conditionResult": {"successNode": [""], "failedNode": [""]},
+        "waitStartTimeout": {},
+        'imagePullPolicy': ipp,
+        'customizedLabels': [],
+        'nodeSelectors': [],
+        'minCpuCores': None,
+        'minMemorySpace': None,
+        'namespace': None,
+        'args': '[]',
+        'command': '[]',
+    }
+    with patch(
+            "pydolphinscheduler.core.task.Task.gen_code_and_version",
+            return_value=(code, version),
+    ):
+        k8s = Kubernetes(name, image, ipp)
 
         assert k8s.task_params == expect_task_params
