@@ -124,6 +124,7 @@ class Task(Base):
         "timeout_notify_strategy",
         "timeout",
         "is_cache",
+        'task_execute_type'
     }
 
     # task default attribute will into `task_params` property
@@ -142,13 +143,11 @@ class Task(Base):
     ext: set = None
     ext_attr: Union[str, types.FunctionType] = None
 
-    DEFAULT_CONDITION_RESULT = {"successNode": [""], "failedNode": [""]}
-
     def __init__(
             self,
             name: str,
             task_type: str,
-            description: Optional[str] = None,
+            description: Optional[str] = "",
             flag: Optional[str] = TaskFlag.YES,
             task_priority: Optional[str] = TaskPriority.MEDIUM,
             worker_group: Optional[str] = configuration.WORKFLOW_WORKER_GROUP,
@@ -156,7 +155,7 @@ class Task(Base):
             delay_time: Optional[int] = 0,
             fail_retry_times: Optional[int] = 0,
             fail_retry_interval: Optional[int] = 1,
-            timeout_notify_strategy: Optional = None,
+            timeout_notify_strategy: Optional = "",
             timeout: Optional[timedelta] = None,
             workflow: Optional[Workflow] = None,
             resource_list: Optional[List] = None,
@@ -220,10 +219,11 @@ class Task(Base):
 
         # Attribute for task param
         self._resource_list = resource_list or []
-        self.dependence = dependence or {}
-        self.wait_start_timeout = wait_start_timeout or {}
-        self._condition_result = condition_result or self.DEFAULT_CONDITION_RESULT
+        self.dependence = dependence
+        self.wait_start_timeout = wait_start_timeout
+        self._condition_result = condition_result
         self.resource_plugin = resource_plugin
+        self.task_execute_type = "BATCH"
         self.get_content()
 
     @property

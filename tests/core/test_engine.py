@@ -70,8 +70,6 @@ def test_get_jar_detail(mock_resource, mock_code_version):
                 "programType": ProgramType.JAVA,
                 "localParams": [],
                 "resourceList": [],
-                "dependence": {},
-                "conditionResult": {"successNode": [""], "failedNode": [""]},
                 "waitStartTimeout": {},
             },
         )
@@ -106,7 +104,7 @@ def test_property_task_params(mock_resource, mock_code_version, attr, expect):
                 "code": 123,
                 "name": "test-task-test_engine_get_define",
                 "version": 1,
-                "description": None,
+                "description": "",
                 "delayTime": 0,
                 "taskType": "test-engine",
                 "taskParams": {
@@ -117,8 +115,6 @@ def test_property_task_params(mock_resource, mock_code_version, attr, expect):
                     "programType": ProgramType.JAVA,
                     "localParams": [],
                     "resourceList": [],
-                    "dependence": {},
-                    "conditionResult": {"successNode": [""], "failedNode": [""]},
                     "waitStartTimeout": {},
                 },
                 "flag": "YES",
@@ -129,7 +125,7 @@ def test_property_task_params(mock_resource, mock_code_version, attr, expect):
                 "failRetryTimes": 0,
                 "failRetryInterval": 1,
                 "timeoutFlag": "CLOSE",
-                "timeoutNotifyStrategy": None,
+                "timeoutNotifyStrategy": "",
                 "timeout": 0,
             },
         )

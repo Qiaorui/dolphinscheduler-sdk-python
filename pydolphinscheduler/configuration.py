@@ -216,6 +216,10 @@ WORKFLOW_EXECUTION_TYPE = os.environ.get(
     "PYDS_WORKFLOW_EXECUTION_TYPE", configs.get("default.workflow.execution_type")
 )
 
+ENVIRONMENT_NAME = os.environ.get(
+    "PYDS_WORKFLOW_ENVIRONMENT_NAME", configs.get("default.workflow.environment_name")
+)
+
 # Task Settings
 KUBERNATES_IMAGE = configs.get('default.kubernates.image') if 'kubernates' in configs.get(
     'default') else os.environ.get('PYDS_KUBERNATES_IMAGE')
