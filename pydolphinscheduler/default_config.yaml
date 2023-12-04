@@ -22,7 +22,7 @@ java_gateway:
   auth_token: jwUDzpLsNKEFER4*a8gruBH_GsAurNxU7A@Xc
 
   # The address of Python gateway server start. Set its value to `0.0.0.0` if your Python API run in different
-  # between Python gateway server. It could be be specific to other address like `127.0.0.1` or `localhost`
+  # between Python gateway server. It could be specific to other address like `127.0.0.1` or `localhost`
   address: 127.0.0.1
 
   # The port of Python gateway server start. Define which port you could connect to Python gateway server from

@@ -241,12 +241,13 @@ def test_task_get_define():
         "code": code,
         "name": name,
         "version": version,
-        "description": "",
+        "description": None,
         "delayTime": 0,
         "taskType": task_type,
         "taskParams": {
             "resourceList": [],
             "localParams": [],
+            "dependence": {},
             "conditionResult": {"successNode": [""], "failedNode": [""]},
             "waitStartTimeout": {},
         },
@@ -258,7 +259,7 @@ def test_task_get_define():
         "failRetryTimes": 0,
         "failRetryInterval": 1,
         "timeoutFlag": "CLOSE",
-        "timeoutNotifyStrategy": "",
+        "timeoutNotifyStrategy": None,
         "timeout": 0,
     }
     with patch(
